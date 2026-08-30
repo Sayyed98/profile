@@ -1,0 +1,12 @@
+bin/
+tmp/
+.env
+*.exe
+*.test
+*.out
+vendor/
+frontend/node_modules/
+frontend/dist/
+.idea/
+.vscode/
+*.log
