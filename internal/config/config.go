@@ -46,7 +46,7 @@ func Load() Config {
 	}
 
 	return Config{
-		HTTPAddr:       env("HTTP_ADDR", ":8080"),
+		HTTPAddr:       env("HTTP_ADDR", ":"+env("PORT","	8080")),
 		MySQLDSN:       dsn,
 		MySQLUser:      user,
 		MySQLHost:      host,
