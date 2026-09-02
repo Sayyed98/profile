@@ -47,3 +47,17 @@ cd frontend && npm install && npm run dev
 ```
 
 Open http://localhost:5173
+
+Firstly i deploy database (MySQL) on aiven, got credential from there, and run migraion
+for checking table has been created or not, data has been feed or not
+mysql -h mysql-5325ab9-huzaifaanis40-c914.d.aivencloud.com -P 21632 -u avnadmin -p defaultdb --ssl-mode=REQUIRED
+run this one from terminal, and enter the password
+
+Second: Deploy the backend to render a hosting platfrom,
+for testing the backend api is working on not you can test:
+https://profile-b88z.onrender.com/healthz
+https://profile-b88z.onrender.com/api/v1/portfolio
+
+Third: Now frontend deploy to netlfiy hosting platform,
+https://hujaifa-portfolio.netlify.app/
+and integrated backend hereg
