@@ -170,8 +170,8 @@ export default function App() {
         ) : (
           <div className="contact-wrap">
             <p>
-              REST <code>POST /api/v1/contact</code> persists to MySQL, then a worker pool publishes{" "}
-              <code>contact.created</code> to RabbitMQ.
+              {/* REST <code>POST /api/v1/contact</code> persists to MySQL, then a worker pool publishes{" "}
+              <code>contact.created</code> to RabbitMQ. */}
             </p>
             <form onSubmit={onSubmit} className="card form">
               <label>
