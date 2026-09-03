@@ -3,6 +3,7 @@ import { fetchPortfolio, formatRange, sendContact } from "./api.js";
 
 export default function App() {
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -10,7 +11,8 @@ export default function App() {
   useEffect(() => {
     fetchPortfolio()
       .then(setData)
-      .catch(() => setError("Could not reach the Go API. Start MySQL + the backend, then refresh."));
+      .finally(() => setLoading(false));
+      // .catch(() => setError("Could not reach the Go API. Start MySQL + the backend, then refresh."));
   }, []);
 
   const years = useMemo(() => {
@@ -35,7 +37,7 @@ export default function App() {
     <div className="page">
       <div className="grid-bg" />
       <header className="nav">
-        <span className="logo">mh/profile</span>
+        <span className="logo">Mohd Hujaifa/profile</span>
         <nav>
           <a href="#skills">Skills</a>
           <a href="#experience">Experience</a>
@@ -45,6 +47,11 @@ export default function App() {
       </header>
 
       {error && <div className="banner">{error}</div>}
+      {loading && (
+        <div className="banner">
+            Waking up the backend… first load can take up to a minute (free server tier).
+        </div>
+      )}
 
       <section className="hero">
         <p className="kicker">Allahabad · Backend · Distributed systems</p>
@@ -69,123 +76,143 @@ export default function App() {
 
       <section id="skills">
         <h2>Skills</h2>
-        <div className="skill-grid">
-          {(data?.skills || []).map((g) => (
-            <article key={g.category} className="card">
-              <h3>{g.category}</h3>
-              <ul className="chips">
-                {g.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
+        {loading ? (
+          <p className="muted">Loading…</p>
+        ) : (
+          <div className="skill-grid">
+            {(data?.skills || []).map((g) => (
+              <article key={g.category} className="card">
+                <h3>{g.category}</h3>
+                <ul className="chips">
+                  {g.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       <section id="experience">
         <h2>Experience</h2>
-        <ol className="timeline">
-          {(data?.experience || []).map((job) => (
-            <li key={job.id} className="card">
-              <div className="job-head">
-                <div>
-                  <h3>{job.role}</h3>
-                  <p className="muted">
-                    {job.company}
-                    {job.client ? ` · Client: ${job.client}` : ""} · {job.location}
-                  </p>
+        {loading ? (
+          <p className="muted">Loading…</p>
+        ) : (
+          <ol className="timeline">
+            {(data?.experience || []).map((job) => (
+              <li key={job.id} className="card">
+                <div className="job-head">
+                  <div>
+                    <h3>{job.role}</h3>
+                    <p className="muted">
+                      {job.company}
+                      {job.client ? ` · Client: ${job.client}` : ""} · {job.location}
+                    </p>
+                  </div>
+                  <time>{formatRange(job.start_date, job.end_date)}</time>
                 </div>
-                <time>{formatRange(job.start_date, job.end_date)}</time>
-              </div>
-              <ul className="bullets">
-                {job.bullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ol>
+                <ul className="bullets">
+                  {job.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ol>
+        )}
       </section>
 
       <section id="projects">
         <h2>Projects</h2>
-        <div className="project-grid">
-          {(data?.projects || []).map((p) => (
-            <article key={p.id} className="card">
-              <h3>{p.name}</h3>
-              <p>{p.summary}</p>
-              <ul className="bullets">
-                {p.bullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
+        {loading ? (
+          <p className="muted">Loading…</p>
+        ) : (
+          <div className="project-grid">
+            {(data?.projects || []).map((p) => (
+              <article key={p.id} className="card">
+                <h3>{p.name}</h3>
+                <p>{p.summary}</p>
+                <ul className="bullets">
+                  {p.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       <section id="education">
         <h2>Education</h2>
-        <div className="edu-grid">
-          {(data?.education || []).map((ed) => (
-            <article key={ed.id} className="card">
-              <h3>{ed.degree}</h3>
-              <p className="muted">{ed.institution}</p>
-              <p>
-                {ed.location} · {formatRange(ed.start_date, ed.end_date)}
-              </p>
-            </article>
-          ))}
-        </div>
+        {loading ? (
+          <p className="muted">Loading…</p>
+        ) : (
+          <div className="edu-grid">
+            {(data?.education || []).map((ed) => (
+              <article key={ed.id} className="card">
+                <h3>{ed.degree}</h3>
+                <p className="muted">{ed.institution}</p>
+                <p>
+                  {ed.location} · {formatRange(ed.start_date, ed.end_date)}
+                </p>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       <section id="contact">
         <h2>Contact</h2>
-        <div className="contact-wrap">
-          <p>
-            REST <code>POST /api/v1/contact</code> persists to MySQL, then a worker pool publishes{" "}
-            <code>contact.created</code> to RabbitMQ.
-          </p>
-          <form onSubmit={onSubmit} className="card form">
-            <label>
-              Name
-              <input
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-            </label>
-            <label>
-              Email
-              <input
-                required
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
-            </label>
-            <label>
-              Subject
-              <input
-                required
-                value={form.subject}
-                onChange={(e) => setForm({ ...form, subject: e.target.value })}
-              />
-            </label>
-            <label>
-              Message
-              <textarea
-                required
-                rows="5"
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-              />
-            </label>
-            <button type="submit">Send message</button>
-            {status && <p className="status">{status}</p>}
-          </form>
-        </div>
+        {loading ? (
+          <p className="muted">Loading…</p>
+        ) : (
+          <div className="contact-wrap">
+            <p>
+              REST <code>POST /api/v1/contact</code> persists to MySQL, then a worker pool publishes{" "}
+              <code>contact.created</code> to RabbitMQ.
+            </p>
+            <form onSubmit={onSubmit} className="card form">
+              <label>
+                Name
+                <input
+                  required
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+              </label>
+              <label>
+                Email
+                <input
+                  required
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </label>
+              <label>
+                Subject
+                <input
+                  required
+                  value={form.subject}
+                  onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                />
+              </label>
+              <label>
+                Message
+                <textarea
+                  required
+                  rows="5"
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                />
+              </label>
+              <button type="submit">Send message</button>
+              {status && <p className="status">{status}</p>}
+            </form>
+          </div>
+        )}
       </section>
 
       <footer>
